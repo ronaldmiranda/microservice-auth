@@ -16,7 +16,7 @@ jobs:
     - name: configuring environment variables
       run: |
         echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/hello-gitops" >> $GITHUB_ENV
-        echo "DOCKER_TAG=$(cat .last_sucessful_build_img | head -c7)" >> $GITHUB_ENV
+        echo "DOCKER_TAG=$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v1.1.0
@@ -29,8 +29,8 @@ jobs:
     - name: generate release file
       run: |
 
-        sed -i 's|$(cat .last_sucessful_build_img)|${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}|' $GITHUB_WORKSPACE/helm/values.yml
-        echo ${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }} > .last_sucessful_build_img
+        sed -i 's|${{ env.IMAGE_NAME}}:$(cat .last_sucessful_tag)|${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}|' $GITHUB_WORKSPACE/helm/values.yml
+        echo ${{ env.DOCKER_TAG }} > .last_sucessful_tag
 
     - name: push
       uses: github-actions-x/commit@v2.8
@@ -38,6 +38,6 @@ jobs:
         github-token: ${{ secrets.GH_TOKEN }}
         push-branch: 'main'
         commit-message: '[VERSION] bump version'
-        files: .last_sucessful_build_img, ./helm/values.yml
+        files: .last_sucessful_tag, ./helm/values.yml
         name: GitHub Action
         email: "action@github.com"
