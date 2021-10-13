@@ -17,4 +17,4 @@ WORKDIR /app
 
 COPY --from=builder /go/src/app/auth-api .
 
-CMD auth-api
+ENTRYPOINT [ "./auth-api" ]
