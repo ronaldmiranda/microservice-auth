@@ -15,7 +15,7 @@ jobs:
     
     - name: configuring environment variables
       run: |
-        echo "IMAGE_NAME=${secrets.DOCKERHUB_USERNAME}/hello-gitops" >> $GITHUB_ENV
+        echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/hello-gitops" >> $GITHUB_ENV
         echo "DOCKER_TAG=$(cat .VERSION | head -c7)" >> $GITHUB_ENV
 
     - name: Login to DockerHub
