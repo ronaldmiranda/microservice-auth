@@ -38,6 +38,6 @@ jobs:
         github-token: ${{ secrets.GH_TOKEN }}
         push-branch: 'main'
         commit-message: '[VERSION] bump version'
-        files: .last_sucessful_tag, ./helm/values.yaml
+        files: .last_sucessful_tag ./helm/values.yaml
         name: GitHub Action
         email: "action@github.com"
