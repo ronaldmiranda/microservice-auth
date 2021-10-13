@@ -7,4 +7,4 @@ quarkus:
        enabled: true
     replicas: 3
  image:
-   name: ronaldmiranda/hello-gitops:d7a5052
+   name: ronaldmiranda/hello-gitops:5dcdff8
