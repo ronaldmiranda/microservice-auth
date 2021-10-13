@@ -35,6 +35,7 @@ jobs:
 
     - name: push
       uses: github-actions-x/commit@v2.8
+      if: github.event.pull_request == false
       with:
         github-token: ${{ secrets.GH_TOKEN }}
         push-branch: 'main'
