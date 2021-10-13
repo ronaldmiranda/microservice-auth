@@ -15,9 +15,8 @@ jobs:
     
     - name: configuring environment variables
       run: |
-        echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/hello-gitops" >> $GITHUB_ENV
         echo "DOCKER_TAG=$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
-        echo "LAST_TAG=$(cat .last_sucessful_tag)"
+        echo "LAST_TAG=$(cat .last_sucessful_tag)" >> $GITHUB_ENV
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v1.1.0
@@ -29,9 +28,7 @@ jobs:
 
     - name: generate release file
       run: |
-        DOCKER_TAG=$(echo ${{ env.DOCKER_TAG }}) \
-        LAST_TAG=$(echo ${{ env.LAST_TAG }}) \
-        sed 's|$LAST_TAG|$DOCKER_TAG|' ./helm/values.yaml
+        sed 's|${{ env.LAST_TAG }}|${{ env.DOCKER_TAG }|' ./helm/values.yaml
         echo ${{ env.DOCKER_TAG }} > .last_sucessful_tag
 
     - name: push
