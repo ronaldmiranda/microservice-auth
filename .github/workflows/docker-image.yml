@@ -22,7 +22,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
-        tags: ${{ DOCKER_TAG }}, latest
+        tags: $DOCKER_TAG, latest
 
     - name: generate release file
       run: |
