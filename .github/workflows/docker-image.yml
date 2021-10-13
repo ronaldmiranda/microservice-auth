@@ -12,19 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: Docker login & build & push
+    
+    - name: configuring environment variables
       run: |
-        export DOCKER_TAG=$(echo $GITHUB_SHA | head -c7)-${{ github.date }}
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ronaldmiranda -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-gitops:$DOCKER_TAG .
-        docker push ${{ secrets.DOCKER_USERNAME }}/hello-gitops:$DOCKER_TAG
+        echo "IMAGE_NAME=${secrets.DOCKERHUB_USERNAME}/hello-gitops" >> $GITHUB_ENV
+        echo "DOCKER_TAG=$(cat .VERSION | head -c7)" >> $GITHUB_ENV
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: generate release file
       run: |
-        export IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/hello-gitops
-        sed -i 's|$(cat .last_sucessful_build_img)|$IMAGE_NAME:$DOCKER_TAG|' $GITHUB_WORKSPACE/helm/values.yml
-        echo $IMAGE_NAME:$DOCKER_TAG > .last_sucessful_build_img
+
+        sed -i 's|$(cat .last_sucessful_build_img)|${{ env.IMAGE_NAME }}:${{ DOCKER_TAG }}|' $GITHUB_WORKSPACE/helm/values.yml
+        echo ${{ env.IMAGE_NAME }}:${{ DOCKER_TAG }} > .last_sucessful_build_img
 
     - name: push
       uses: github-actions-x/commit@v2.8
