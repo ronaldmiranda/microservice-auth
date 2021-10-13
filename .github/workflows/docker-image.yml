@@ -28,7 +28,7 @@ jobs:
       run: |
 
         sed -i 's|$(cat .last_sucessful_build_img)|${{ env.IMAGE_NAME }}:${{ DOCKER_TAG }}|' $GITHUB_WORKSPACE/helm/values.yml
-        echo ${{ env.IMAGE_NAME }}:${{ DOCKER_TAG }} > .last_sucessful_build_img
+        echo ${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }} > .last_sucessful_build_img
 
     - name: push
       uses: github-actions-x/commit@v2.8
