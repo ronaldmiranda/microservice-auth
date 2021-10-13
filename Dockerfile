@@ -1,4 +1,4 @@
-FROM golang:1.9-alpine
+FROM golang:1.9-alpine as builder
 
 EXPOSE 8081
 
@@ -11,4 +11,10 @@ RUN dep ensure
 
 RUN go build -o auth-api
 
-CMD /go/src/app/auth-api
+FROM golang:1.9-alpine
+
+WORKDIR /app
+
+COPY --from=builder /go/src/app/auth-api .
+
+CMD auth-api
