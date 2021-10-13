@@ -30,14 +30,12 @@ jobs:
       run: |
         echo ${{ github.sha }} > .VERSION
 
-    - name: Commit files
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .VERSION
-        git commit -am "Bump docker tag"
-
-    - name: Push changes
-      uses: ad-m/github-push-action@master
+    - name: push
+      uses: github-actions-x/commit@v2.8
       with:
-        github_token: ${{ secrets.GH_TOKEN }}
+        github-token: ${{ secrets.GH_TOKEN }}
+        push-branch: 'main'
+        commit-message: '[VERSION] bump version'
+        files: .VERSION
+        name: GitHub Action
+        email: "action@github.com"
