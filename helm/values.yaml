@@ -1,0 +1,10 @@
+quarkus:
+ build:
+   enabled: false
+ deploy:
+   route:
+     tls:
+       enabled: true
+    replicas: 3
+ image:
+   name: ronaldmiranda/hello-gitops:d7a5052748062f58b370cb4a5b1ad2abc838d802

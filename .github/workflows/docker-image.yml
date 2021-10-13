@@ -6,29 +6,31 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Generating envs
+      run: |
+        export DOCKER_TAG=$(echo $GITHUB_SHA | head -c7)-${{ github.date }}
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v1.1.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
-        tags: ${{ github.sha }}, latest
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+        tags: ${{ DOCKER_TAG }}, latest
+
     - name: generate release file
       run: |
-        echo ${{ github.sha }} > .VERSION
+        export IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/hello-gitops
+        sed -i 's|$(cat .last_sucessful_build_img)|$IMAGE_NAME:$DOCKER_TAG|' $GITHUB_WORKSPACE/helm/values.yml
+        echo $IMAGE_NAME:$DOCKER_TAG > .last_sucessful_build_img
 
     - name: push
       uses: github-actions-x/commit@v2.8
@@ -36,6 +38,6 @@ jobs:
         github-token: ${{ secrets.GH_TOKEN }}
         push-branch: 'main'
         commit-message: '[VERSION] bump version'
-        files: .VERSION
+        files: .last_sucessful_build_img, ./helm/values.yml
         name: GitHub Action
         email: "action@github.com"
