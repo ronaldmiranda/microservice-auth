@@ -29,7 +29,9 @@ jobs:
 
     - name: generate release file
       run: |
-        sed 's/${{ env.LAST_TAG }}/${{ env.DOCKER_TAG }}/g' ./helm/values.yaml
+        DOCKER_TAG=$(echo ${{ env.DOCKER_TAG }}) \
+        LAST_TAG=$(echo ${{ env.LAST_TAG }}) \
+        sed 's|$LAST_TAG|$DOCKER_TAG|' ./helm/values.yaml
         echo ${{ env.DOCKER_TAG }} > .last_sucessful_tag
 
     - name: push
