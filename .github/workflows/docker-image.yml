@@ -1,45 +1,14 @@
-name: Docker Image CI
+name: CI
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - '.github'
-  pull_request:
-    branches: [ main ]
+    branches: [ '*' ]
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: configuring environment variables
-      run: |
-        echo "DOCKER_TAG=$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
-        echo "LAST_TAG=$(cat .last_sucessful_tag)" >> $GITHUB_ENV
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
-        tags: ${{ env.DOCKER_TAG }}, latest
-
-    - name: generate release file
-      run: |
-        echo ${{ env.DOCKER_TAG }} > .last_sucessful_tag
-        sed -i 's|'${{ env.LAST_TAG }}'|'$(cat .last_sucessful_tag)'|' ./helm/values.yaml
-
-    - name: push
-      uses: github-actions-x/commit@v2.8
-      if: github.event.pull_request == false
-      with:
-        github-token: ${{ secrets.GH_TOKEN }}
-        push-branch: 'main'
-        commit-message: '[VERSION] bump version'
-        files: .last_sucessful_tag ./helm/values.yaml
-        name: GitHub Action
-        email: "action@github.com"
+  main_workflow:
+    uses: ronaldmiranda/microservice-workflow/.github/workflows/pipeline.yaml@master
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME}}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
+      GH_TOKEN: ${{ secrets.GH_TOKEN}}

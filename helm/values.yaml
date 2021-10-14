@@ -1,10 +1,18 @@
-quarkus:
- build:
-   enabled: false
- deploy:
-   route:
-     tls:
-       enabled: true
-    replicas: 3
- image:
-   name: ronaldmiranda/hello-gitops:b29e8f6
+microservice-deploys:
+  container:
+    microserviceName: auth-api
+    namespace: microservice-ns
+    image: ronaldmiranda/auth-api
+    tag: b29e8f6
+    envs:
+      normalEnvs:
+        AUTH_API_PORT: "8081"
+        USERS_API_ADDRESS: http://users-api:8083
+        ZIPKIN_URL: http://zipkin-svc.zipkin-system.svc.cluster.local:9411/api/v2/spans
+      envsSecretRef:
+        - ENV_NAME: JWT_SECRET
+          SECRET_NAME: jwt-secret
+          SECRET_KEY: token
+  service:
+    servicePort:
+      - 8081
