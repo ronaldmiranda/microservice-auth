@@ -8,6 +8,8 @@ jobs:
 
   main_workflow:
     uses: ronaldmiranda/microservice-workflow/.github/workflows/pipeline.yaml@master
+    with:
+      imagerepo: auth-api
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME}}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
