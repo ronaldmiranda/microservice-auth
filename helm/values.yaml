@@ -3,7 +3,7 @@ microservice-deploys:
     microserviceName: auth-api
     namespace: microservice-ns
     image: ronaldmiranda/auth-api
-    tag: b29e8f6
+    tag: e1ffc4d
     envs:
       normalEnvs:
         AUTH_API_PORT: "8081"
